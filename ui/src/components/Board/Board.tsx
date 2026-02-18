@@ -1,0 +1,126 @@
+import { useCallback, useMemo } from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
+import { useState } from 'react';
+import type { BoardData, StoryStatus } from '../../../../src/types/index';
+import { BOARD_COLUMNS } from '../../../../src/types/index';
+import { Column } from './Column';
+import { StoryCard } from '../StoryCard';
+
+interface BoardProps {
+  board: BoardData;
+  moveStory: (storyId: string, newStatus: StoryStatus) => void;
+  featureFilter: string | null;
+  epicFilter: string | null;
+}
+
+export function Board({
+  board,
+  moveStory,
+  featureFilter,
+  epicFilter,
+}: BoardProps) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  );
+
+  // Build epic name map
+  const epicNames = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const epic of Object.values(board.epics)) {
+      map[epic.id] = `${epic.name}`;
+    }
+    return map;
+  }, [board.epics]);
+
+  // Filter stories
+  const filteredStories = useMemo(() => {
+    return Object.values(board.stories).filter((story) => {
+      if (featureFilter && story.featureId !== featureFilter) return false;
+      if (epicFilter && story.epicId !== epicFilter) return false;
+      return true;
+    });
+  }, [board.stories, featureFilter, epicFilter]);
+
+  // Group by column
+  const columns = useMemo(() => {
+    const groups: Record<StoryStatus, typeof filteredStories> = {
+      backlog: [],
+      'ready-for-dev': [],
+      'in-progress': [],
+      review: [],
+      done: [],
+    };
+    for (const story of filteredStories) {
+      if (groups[story.status]) {
+        groups[story.status].push(story);
+      }
+    }
+    return groups;
+  }, [filteredStories]);
+
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  }, []);
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      setActiveId(null);
+      const { active, over } = event;
+      if (!over) return;
+
+      const storyId = active.id as string;
+      const newStatus = over.id as StoryStatus;
+
+      // Only move if the target is a column (not another card)
+      if (BOARD_COLUMNS.includes(newStatus)) {
+        const story = board.stories[storyId];
+        if (story && story.status !== newStatus) {
+          moveStory(storyId, newStatus);
+        }
+      }
+    },
+    [board.stories, moveStory]
+  );
+
+  const activeStory = activeId ? board.stories[activeId] : null;
+
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex gap-4 p-4 overflow-x-auto board-scroll h-[calc(100vh-56px)]">
+        {BOARD_COLUMNS.map((status) => (
+          <Column
+            key={status}
+            status={status}
+            stories={columns[status]}
+            epicNames={epicNames}
+          />
+        ))}
+      </div>
+
+      <DragOverlay>
+        {activeStory ? (
+          <div className="w-[280px]">
+            <StoryCard
+              story={activeStory}
+              epicName={epicNames[activeStory.epicId] || ''}
+            />
+          </div>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
+  );
+}
