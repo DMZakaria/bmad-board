@@ -15,3 +15,41 @@
 .board-scroll::-webkit-scrollbar-thumb:hover {
   background: theme(--color-slate-600);
 }
+
+/* Form fields */
+.input-field {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: theme(--color-slate-200);
+  background: theme(--color-slate-800);
+  border: 1px solid theme(--color-slate-700);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.input-field:focus {
+  border-color: theme(--color-blue-500);
+}
+.input-field::placeholder {
+  color: theme(--color-slate-600);
+}
+
+.select-field {
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: theme(--color-slate-200);
+  background: theme(--color-slate-800);
+  border: 1px solid theme(--color-slate-700);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s;
+  cursor: pointer;
+}
+.select-field:focus {
+  border-color: theme(--color-blue-500);
+}
+.select-field option {
+  background: theme(--color-slate-800);
+}

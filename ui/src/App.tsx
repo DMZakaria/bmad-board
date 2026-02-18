@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Header } from './components/Layout';
 import { Board } from './components/Board';
 import { Filters } from './components/Filters';
+import { CreateStoryModal } from './components/CreateStory';
 import { useBoard } from './hooks/useBoard';
 
 export default function App() {
   const { board, loading, error, connected, refresh, moveStory } = useBoard();
   const [featureFilter, setFeatureFilter] = useState<string | null>(null);
   const [epicFilter, setEpicFilter] = useState<string | null>(null);
+  const [showCreateStory, setShowCreateStory] = useState(false);
 
   if (loading) {
     return (
@@ -38,7 +40,12 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <Header board={board} connected={connected} onRefresh={refresh} />
+      <Header
+        board={board}
+        connected={connected}
+        onRefresh={refresh}
+        onNewStory={() => setShowCreateStory(true)}
+      />
       <Filters
         board={board}
         featureFilter={featureFilter}
@@ -51,6 +58,12 @@ export default function App() {
         moveStory={moveStory}
         featureFilter={featureFilter}
         epicFilter={epicFilter}
+      />
+      <CreateStoryModal
+        board={board}
+        open={showCreateStory}
+        onClose={() => setShowCreateStory(false)}
+        onCreated={refresh}
       />
     </div>
   );

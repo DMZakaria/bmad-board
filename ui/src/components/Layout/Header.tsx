@@ -4,9 +4,10 @@ interface HeaderProps {
   board: BoardData;
   connected: boolean;
   onRefresh: () => void;
+  onNewStory: () => void;
 }
 
-export function Header({ board, connected, onRefresh }: HeaderProps) {
+export function Header({ board, connected, onRefresh, onNewStory }: HeaderProps) {
   const totalStories = Object.keys(board.stories).length;
   const doneStories = Object.values(board.stories).filter(
     (s) => s.status === 'done'
@@ -39,7 +40,7 @@ export function Header({ board, connected, onRefresh }: HeaderProps) {
         </span>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4">
         {/* Progress */}
         <div className="flex items-center gap-3">
           <div className="w-32 h-2 bg-slate-800 rounded-full overflow-hidden">
@@ -60,6 +61,14 @@ export function Header({ board, connected, onRefresh }: HeaderProps) {
             {doneStories}/{totalStories} ({pct}%)
           </span>
         </div>
+
+        {/* New Story */}
+        <button
+          onClick={onNewStory}
+          className="px-3 py-1 text-xs font-medium bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors"
+        >
+          + New Story
+        </button>
 
         {/* Refresh */}
         <button
