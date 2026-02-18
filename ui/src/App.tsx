@@ -5,7 +5,7 @@ import { Filters } from './components/Filters';
 import { useBoard } from './hooks/useBoard';
 
 export default function App() {
-  const { board, loading, error, refresh, moveStory } = useBoard();
+  const { board, loading, error, connected, refresh, moveStory } = useBoard();
   const [featureFilter, setFeatureFilter] = useState<string | null>(null);
   const [epicFilter, setEpicFilter] = useState<string | null>(null);
 
@@ -38,7 +38,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <Header board={board} onRefresh={refresh} />
+      <Header board={board} connected={connected} onRefresh={refresh} />
       <Filters
         board={board}
         featureFilter={featureFilter}

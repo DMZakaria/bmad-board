@@ -88,12 +88,19 @@ program
     );
     console.log('');
 
+    const watchEnabled = opts.watch !== false;
+
     try {
-      const { url } = await createServer({ bmadPath, port });
+      const { url } = await createServer({ bmadPath, port, watch: watchEnabled });
 
       console.log(
         `  ${chalk.green('●')} Board running at ${chalk.cyan.underline(url)}`
       );
+      if (watchEnabled) {
+        console.log(
+          `  ${chalk.blue('●')} Watching for file changes`
+        );
+      }
       console.log(
         chalk.gray('  Press Ctrl+C to stop\n')
       );

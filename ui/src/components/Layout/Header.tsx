@@ -2,10 +2,11 @@ import type { BoardData } from '../../../../src/types/index';
 
 interface HeaderProps {
   board: BoardData;
+  connected: boolean;
   onRefresh: () => void;
 }
 
-export function Header({ board, onRefresh }: HeaderProps) {
+export function Header({ board, connected, onRefresh }: HeaderProps) {
   const totalStories = Object.keys(board.stories).length;
   const doneStories = Object.values(board.stories).filter(
     (s) => s.status === 'done'
@@ -21,6 +22,20 @@ export function Header({ board, onRefresh }: HeaderProps) {
         </h1>
         <span className="text-sm text-slate-500">
           {board.project}
+        </span>
+        {/* Live connection indicator */}
+        <span
+          className={`flex items-center gap-1 text-[10px] ${
+            connected ? 'text-green-500' : 'text-slate-600'
+          }`}
+          title={connected ? 'Live reload active' : 'Disconnected'}
+        >
+          <span
+            className={`inline-block w-1.5 h-1.5 rounded-full ${
+              connected ? 'bg-green-500 animate-pulse' : 'bg-slate-600'
+            }`}
+          />
+          {connected ? 'Live' : 'Offline'}
         </span>
       </div>
 
