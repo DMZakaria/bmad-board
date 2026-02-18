@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Header } from './components/Layout';
-import { Board } from './components/Board';
+import { Board, SwimlaneBoard } from './components/Board';
 import { Filters } from './components/Filters';
+import type { ViewMode } from './components/Filters/Filters';
 import { CreateStoryModal } from './components/CreateStory';
 import { useBoard } from './hooks/useBoard';
 
@@ -9,6 +10,7 @@ export default function App() {
   const { board, loading, error, connected, refresh, moveStory } = useBoard();
   const [featureFilter, setFeatureFilter] = useState<string | null>(null);
   const [epicFilter, setEpicFilter] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('board');
   const [showCreateStory, setShowCreateStory] = useState(false);
 
   if (loading) {
@@ -50,15 +52,26 @@ export default function App() {
         board={board}
         featureFilter={featureFilter}
         epicFilter={epicFilter}
+        viewMode={viewMode}
         onFeatureChange={setFeatureFilter}
         onEpicChange={setEpicFilter}
+        onViewModeChange={setViewMode}
       />
-      <Board
-        board={board}
-        moveStory={moveStory}
-        featureFilter={featureFilter}
-        epicFilter={epicFilter}
-      />
+      {viewMode === 'board' ? (
+        <Board
+          board={board}
+          moveStory={moveStory}
+          featureFilter={featureFilter}
+          epicFilter={epicFilter}
+        />
+      ) : (
+        <SwimlaneBoard
+          board={board}
+          moveStory={moveStory}
+          featureFilter={featureFilter}
+          epicFilter={epicFilter}
+        />
+      )}
       <CreateStoryModal
         board={board}
         open={showCreateStory}

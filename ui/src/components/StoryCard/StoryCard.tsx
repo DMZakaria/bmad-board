@@ -5,6 +5,8 @@ import type { Story } from '../../../../src/types/index';
 interface StoryCardProps {
   story: Story;
   epicName: string;
+  /** Compact mode for swimlane cells — hides epic label and comment */
+  compact?: boolean;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -15,7 +17,7 @@ const STATUS_COLORS: Record<string, string> = {
   done: 'border-l-green-500',
 };
 
-export function StoryCard({ story, epicName }: StoryCardProps) {
+export function StoryCard({ story, epicName, compact }: StoryCardProps) {
   const {
     attributes,
     listeners,
@@ -42,20 +44,27 @@ export function StoryCard({ story, epicName }: StoryCardProps) {
       {...attributes}
       {...listeners}
       className={`
-        bg-slate-800 rounded-lg p-3 border-l-4 ${STATUS_COLORS[story.status] || 'border-l-slate-600'}
+        bg-slate-800 rounded-lg border-l-4 ${STATUS_COLORS[story.status] || 'border-l-slate-600'}
         cursor-grab active:cursor-grabbing
         hover:bg-slate-750 hover:ring-1 hover:ring-slate-600
         transition-all duration-150
+        ${compact ? 'p-2' : 'p-3'}
         ${isDragging ? 'opacity-50 shadow-2xl ring-2 ring-blue-500' : 'shadow-sm'}
       `}
     >
-      {/* Epic label */}
-      <div className="text-[10px] font-medium text-slate-500 uppercase tracking-wide mb-1 truncate">
-        {epicName}
-      </div>
+      {/* Epic label — hidden in compact/swimlane mode */}
+      {!compact && (
+        <div className="text-[10px] font-medium text-slate-500 uppercase tracking-wide mb-1 truncate">
+          {epicName}
+        </div>
+      )}
 
       {/* Title */}
-      <h4 className="text-sm font-medium text-slate-200 leading-snug mb-2 line-clamp-2">
+      <h4
+        className={`font-medium text-slate-200 leading-snug ${
+          compact ? 'text-xs mb-1 line-clamp-2' : 'text-sm mb-2 line-clamp-2'
+        }`}
+      >
         {story.title}
       </h4>
 
@@ -64,7 +73,9 @@ export function StoryCard({ story, epicName }: StoryCardProps) {
         {/* Tasks progress */}
         {taskPct !== null && (
           <div className="flex items-center gap-1.5">
-            <div className="w-12 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+            <div
+              className={`${compact ? 'w-10' : 'w-12'} h-1.5 bg-slate-700 rounded-full overflow-hidden`}
+            >
               <div
                 className="h-full rounded-full bg-blue-500"
                 style={{ width: `${taskPct}%` }}
@@ -92,15 +103,15 @@ export function StoryCard({ story, epicName }: StoryCardProps) {
         )}
 
         {/* File indicator */}
-        {story.hasFile && (
+        {!compact && story.hasFile && (
           <span className="text-[10px] text-slate-600" title="Story file exists">
             &#128196;
           </span>
         )}
       </div>
 
-      {/* Comment if present */}
-      {story.comment && (
+      {/* Comment — hidden in compact mode */}
+      {!compact && story.comment && (
         <p className="text-[10px] text-slate-600 mt-1.5 truncate">
           {story.comment}
         </p>
