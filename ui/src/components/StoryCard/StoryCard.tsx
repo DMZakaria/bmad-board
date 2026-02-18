@@ -1,23 +1,14 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { Story } from '../../../../src/types/index';
+import { StatusDot } from '../shared';
 
 interface StoryCardProps {
   story: Story;
   epicName: string;
-  /** Compact mode for swimlane cells — hides epic label and comment */
-  compact?: boolean;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  backlog: 'border-l-slate-600',
-  'ready-for-dev': 'border-l-violet-500',
-  'in-progress': 'border-l-blue-500',
-  review: 'border-l-amber-500',
-  done: 'border-l-green-500',
-};
-
-export function StoryCard({ story, epicName, compact }: StoryCardProps) {
+export function StoryCard({ story, epicName }: StoryCardProps) {
   const {
     attributes,
     listeners,
@@ -32,11 +23,6 @@ export function StoryCard({ story, epicName, compact }: StoryCardProps) {
     transition,
   };
 
-  const taskPct =
-    story.tasksTotal > 0
-      ? Math.round((story.tasksDone / story.tasksTotal) * 100)
-      : null;
-
   return (
     <div
       ref={setNodeRef}
@@ -44,56 +30,36 @@ export function StoryCard({ story, epicName, compact }: StoryCardProps) {
       {...attributes}
       {...listeners}
       className={`
-        bg-slate-800 rounded-lg border-l-4 ${STATUS_COLORS[story.status] || 'border-l-slate-600'}
+        bg-bg-surface border border-border rounded-md p-2.5
         cursor-grab active:cursor-grabbing
-        hover:bg-slate-750 hover:ring-1 hover:ring-slate-600
-        transition-all duration-150
-        ${compact ? 'p-2' : 'p-3'}
-        ${isDragging ? 'opacity-50 shadow-2xl ring-2 ring-blue-500' : 'shadow-sm'}
+        hover:bg-bg-hover
+        transition-all duration-100
+        ${isDragging ? 'opacity-40 shadow-lg' : ''}
       `}
     >
-      {/* Epic label — hidden in compact/swimlane mode */}
-      {!compact && (
-        <div className="text-[10px] font-medium text-slate-500 uppercase tracking-wide mb-1 truncate">
-          {epicName}
-        </div>
-      )}
-
       {/* Title */}
-      <h4
-        className={`font-medium text-slate-200 leading-snug ${
-          compact ? 'text-xs mb-1 line-clamp-2' : 'text-sm mb-2 line-clamp-2'
-        }`}
-      >
+      <div className="text-[13px] font-medium text-text-primary leading-snug line-clamp-2 mb-1.5">
         {story.title}
-      </h4>
+      </div>
 
-      {/* Footer: tasks + assignees */}
-      <div className="flex items-center justify-between gap-2">
-        {/* Tasks progress */}
-        {taskPct !== null && (
-          <div className="flex items-center gap-1.5">
-            <div
-              className={`${compact ? 'w-10' : 'w-12'} h-1.5 bg-slate-700 rounded-full overflow-hidden`}
-            >
-              <div
-                className="h-full rounded-full bg-blue-500"
-                style={{ width: `${taskPct}%` }}
-              />
-            </div>
-            <span className="text-[10px] text-slate-500 tabular-nums">
-              {story.tasksDone}/{story.tasksTotal}
-            </span>
-          </div>
+      {/* Meta row */}
+      <div className="flex items-center gap-2">
+        <StatusDot status={story.status} size="sm" />
+        <span className="text-[11px] text-text-muted truncate">
+          {epicName}
+        </span>
+        <div className="flex-1" />
+        {story.tasksTotal > 0 && (
+          <span className="text-[11px] text-text-secondary tabular-nums">
+            {story.tasksDone}/{story.tasksTotal}
+          </span>
         )}
-
-        {/* Assignees */}
         {story.assignees.length > 0 && (
           <div className="flex -space-x-1">
-            {story.assignees.slice(0, 3).map((name) => (
+            {story.assignees.slice(0, 2).map((name) => (
               <div
                 key={name}
-                className="w-5 h-5 rounded-full bg-slate-600 flex items-center justify-center text-[9px] font-bold text-slate-300 ring-1 ring-slate-800"
+                className="w-[18px] h-[18px] rounded-full bg-bg-active flex items-center justify-center text-[8px] font-semibold text-text-secondary ring-1 ring-bg-surface"
                 title={name}
               >
                 {name.charAt(0).toUpperCase()}
@@ -101,21 +67,7 @@ export function StoryCard({ story, epicName, compact }: StoryCardProps) {
             ))}
           </div>
         )}
-
-        {/* File indicator */}
-        {!compact && story.hasFile && (
-          <span className="text-[10px] text-slate-600" title="Story file exists">
-            &#128196;
-          </span>
-        )}
       </div>
-
-      {/* Comment — hidden in compact mode */}
-      {!compact && story.comment && (
-        <p className="text-[10px] text-slate-600 mt-1.5 truncate">
-          {story.comment}
-        </p>
-      )}
     </div>
   );
 }

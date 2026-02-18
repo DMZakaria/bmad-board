@@ -1,19 +1,53 @@
 @import "tailwindcss";
 
-/* Custom scrollbar for board */
-.board-scroll::-webkit-scrollbar {
-  height: 8px;
+@theme {
+  /* Notion-dark palette */
+  --color-bg-main: #1e1e1e;
+  --color-bg-surface: #262626;
+  --color-bg-hover: #2c2c2c;
+  --color-bg-active: #333333;
+  --color-bg-elevated: #2a2a2a;
+  --color-border: #333333;
+  --color-border-subtle: #2a2a2a;
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #999999;
+  --color-text-muted: #666666;
+  --color-accent: #2383e2;
+  --color-accent-hover: #1a6fc2;
+
+  /* Status colors (muted) */
+  --color-status-backlog: #6b6b6b;
+  --color-status-ready: #9b59b6;
+  --color-status-progress: #2383e2;
+  --color-status-review: #d4a844;
+  --color-status-done: #44b556;
 }
-.board-scroll::-webkit-scrollbar-track {
-  background: theme(--color-slate-900);
-  border-radius: 4px;
+
+/* Base typography */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.board-scroll::-webkit-scrollbar-thumb {
-  background: theme(--color-slate-700);
-  border-radius: 4px;
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-.board-scroll::-webkit-scrollbar-thumb:hover {
-  background: theme(--color-slate-600);
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-bg-active);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
 }
 
 /* Form fields */
@@ -21,35 +55,35 @@
   width: 100%;
   padding: 6px 10px;
   font-size: 13px;
-  color: theme(--color-slate-200);
-  background: theme(--color-slate-800);
-  border: 1px solid theme(--color-slate-700);
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   outline: none;
   transition: border-color 0.15s;
 }
 .input-field:focus {
-  border-color: theme(--color-blue-500);
+  border-color: var(--color-accent);
 }
 .input-field::placeholder {
-  color: theme(--color-slate-600);
+  color: var(--color-text-muted);
 }
 
 .select-field {
   width: 100%;
   padding: 6px 10px;
   font-size: 13px;
-  color: theme(--color-slate-200);
-  background: theme(--color-slate-800);
-  border: 1px solid theme(--color-slate-700);
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   outline: none;
   transition: border-color 0.15s;
   cursor: pointer;
 }
 .select-field:focus {
-  border-color: theme(--color-blue-500);
+  border-color: var(--color-accent);
 }
 .select-field option {
-  background: theme(--color-slate-800);
+  background: var(--color-bg-surface);
 }

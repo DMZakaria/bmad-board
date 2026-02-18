@@ -26,7 +26,6 @@ export function CreateStoryModal({
   const [error, setError] = useState<string | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
 
-  // Reset form when opened
   useEffect(() => {
     if (open) {
       setFeatureId(board.features[0]?.id || '');
@@ -41,7 +40,6 @@ export function CreateStoryModal({
     }
   }, [open, board.features]);
 
-  // Available epics for selected feature
   const availableEpics = featureId
     ? board.features
         .find((f) => f.id === featureId)
@@ -49,7 +47,6 @@ export function CreateStoryModal({
         .filter(Boolean) ?? []
     : [];
 
-  // Auto-select first epic when feature changes
   useEffect(() => {
     if (availableEpics.length > 0 && !epicNum) {
       setEpicNum(availableEpics[0].num);
@@ -111,7 +108,6 @@ export function CreateStoryModal({
     [featureId, epicNum, title, role, want, soThat, acList, onCreated, onClose]
   );
 
-  // Close on Escape
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -125,20 +121,20 @@ export function CreateStoryModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
+      <div className="bg-bg-surface border border-border rounded-lg shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
-          <h2 className="text-base font-semibold text-slate-100">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <h2 className="text-[14px] font-semibold text-text-primary">
             New Story
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-500 hover:text-slate-300 transition-colors text-lg leading-none"
+            className="text-text-muted hover:text-text-secondary transition-colors text-lg leading-none"
           >
             &times;
           </button>
@@ -193,8 +189,8 @@ export function CreateStoryModal({
           </Field>
 
           {/* User story */}
-          <fieldset className="space-y-3 border border-slate-800 rounded-lg p-3">
-            <legend className="text-[10px] text-slate-500 uppercase tracking-wider px-1">
+          <fieldset className="space-y-3 border border-border rounded-md p-3">
+            <legend className="text-[10px] text-text-muted uppercase tracking-wider px-1">
               User Story
             </legend>
             <Field label="As a...">
@@ -227,13 +223,13 @@ export function CreateStoryModal({
           </fieldset>
 
           {/* Acceptance Criteria */}
-          <fieldset className="space-y-2 border border-slate-800 rounded-lg p-3">
-            <legend className="text-[10px] text-slate-500 uppercase tracking-wider px-1">
+          <fieldset className="space-y-2 border border-border rounded-md p-3">
+            <legend className="text-[10px] text-text-muted uppercase tracking-wider px-1">
               Acceptance Criteria
             </legend>
             {acList.map((ac, index) => (
               <div key={index} className="flex gap-2">
-                <span className="text-xs text-slate-600 mt-2 w-5 text-right shrink-0">
+                <span className="text-[11px] text-text-muted mt-2 w-5 text-right shrink-0">
                   {index + 1}.
                 </span>
                 <input
@@ -247,7 +243,7 @@ export function CreateStoryModal({
                   <button
                     type="button"
                     onClick={() => removeAc(index)}
-                    className="text-slate-600 hover:text-red-400 transition-colors text-sm px-1"
+                    className="text-text-muted hover:text-red-400 transition-colors text-[13px] px-1"
                   >
                     &times;
                   </button>
@@ -257,7 +253,7 @@ export function CreateStoryModal({
             <button
               type="button"
               onClick={addAc}
-              className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              className="text-[12px] text-accent hover:text-accent-hover transition-colors"
             >
               + Add criteria
             </button>
@@ -265,7 +261,7 @@ export function CreateStoryModal({
 
           {/* Error */}
           {error && (
-            <p className="text-xs text-red-400 bg-red-400/10 px-3 py-2 rounded">
+            <p className="text-[12px] text-red-400 bg-red-400/10 px-3 py-2 rounded-md">
               {error}
             </p>
           )}
@@ -275,14 +271,14 @@ export function CreateStoryModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-3 py-1.5 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+              className="px-3 py-1.5 text-[13px] text-text-muted hover:text-text-primary transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="px-4 py-1.5 text-sm font-medium bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-lg transition-colors"
+              className="px-4 py-1.5 text-[13px] font-medium bg-accent hover:bg-accent-hover disabled:opacity-40 text-white rounded-md transition-colors"
             >
               {submitting ? 'Creating...' : 'Create Story'}
             </button>
@@ -302,7 +298,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-xs text-slate-400 mb-1 block">{label}</span>
+      <span className="text-[11px] text-text-secondary mb-1 block">{label}</span>
       {children}
     </label>
   );
